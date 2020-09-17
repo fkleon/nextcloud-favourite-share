@@ -33,9 +33,12 @@ class NextCloudFavouriteShare {
         userFavorites.map((favorite) => processFavorite(favorite)));
 
     // Couunt processed files
-    return processedFavorites
+    final count = processedFavorites
         .map((updated) => updated ? 1 : 0)
         .reduce((previous, element) => previous + element);
+
+    print('Synchronized favorites: $count of ${userFavorites.length}');
+    return count;
   }
 
   Future<bool> processFavorite(WebDavFile favorite) async {
@@ -62,8 +65,13 @@ class NextCloudFavouriteShare {
     try {
       await client.webDav.copy(favorite.path, target);
     } on RequestException catch (ex) {
-      print('!> Failed to share ${favorite.name}: ${ex.statusCode}');
-      return false;
+      if (ex.statusCode == 412) {
+        // File exists already, update original ID.
+      } else {
+        // Some other problem.
+        print('!> Failed to share ${favorite.name}: ${ex.statusCode}');
+        return false;
+      }
     }
 
     // Keep track of original ID

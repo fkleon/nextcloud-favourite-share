@@ -39,6 +39,6 @@ void main(List<String> arguments) async {
   final nfs = NextCloudFavouriteShare(
       NextCloudClient(host, username, password), sourceFolder, sharedFolder);
 
-  final count = await nfs.syncFavorites();
-  print('Synchronized $count favorites for user $username.');
+  await nfs.syncFavorites();
+  print('Synchronized favorites for user $username.');
 }
