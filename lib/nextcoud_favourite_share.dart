@@ -5,7 +5,11 @@ const Map<String, String> _propNamespaces = {'$_propNamespace': 'le'};
 const String _propOriginalId = 'le:original-id';
 
 class NextCloudFavouriteShare {
-  NextCloudFavouriteShare(this.client, this.sourceDir, this.targetDir);
+  NextCloudFavouriteShare(this.client, this.sourceDir, this.targetDir) {
+    // Register custom namespaces
+    _propNamespaces
+        .forEach((ns, prefix) => client.webDav.registerNamespace(ns, prefix));
+  }
 
   /// The NextCloud client.
   final NextCloudClient client;
@@ -25,8 +29,8 @@ class NextCloudFavouriteShare {
         props: {'oc:id', 'd:resourcetype'});
 
     // Find all shared files in targetDir
-    _sharedFiles = await client.webDav.ls(targetDir,
-        props: {'oc:id', _propOriginalId}, customNamespaces: _propNamespaces);
+    _sharedFiles =
+        await client.webDav.ls(targetDir, props: {'oc:id', _propOriginalId});
 
     // Process all favourites
     final processedFavorites = await Future.wait(
@@ -76,22 +80,20 @@ class NextCloudFavouriteShare {
 
     // Keep track of original ID
     final updated = await client.webDav.updateProps(
-        target,
-        {
-          _propOriginalId: favorite.id,
-        },
-        customNamespaces: _propNamespaces);
+      target,
+      {
+        _propOriginalId: favorite.id,
+      },
+    );
 
     if (!updated) {
       print('!> Failed to set original ID on ${target}');
     }
 
-    final sharedFile = await client.webDav.getProps(target,
-        props: {
-          'oc:id',
-          _propOriginalId,
-        },
-        customNamespaces: _propNamespaces);
+    final sharedFile = await client.webDav.getProps(target, props: {
+      'oc:id',
+      _propOriginalId,
+    });
     print(
         '+> Shared ${favorite.name}: to ${sharedFile.path} (${sharedFile.id})');
     return true;
