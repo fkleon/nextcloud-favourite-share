@@ -9,12 +9,16 @@ folder.
 
 The application is in `bin/main.dart`.
 
-	Available options:
-	--host                                The NextCloud host to connect to
-					      (defaults to "http://localhost:8081")
-	--username                            The username to connect with
-					      (defaults to "admin")
-	--password                            The password to use
-					      (defaults to "admin")
-	--source-dir=</files/admin/>          WebDAV path of the directory to scan for favourites
-	--target-dir=</files/admin/shared>    WebDAV path of the directory to copy favorites to
+    Available options:
+    --host                                The NextCloud host to connect to
+                                          (defaults to "http://localhost:8081")
+    --username                            The username to connect with
+                                          (defaults to "admin")
+    --password                            The password to use
+                                          (defaults to "admin")
+    --source-dir=</files/admin/>          WebDAV path of the directory to scan for favourites
+    --target-dir=</files/admin/shared>    WebDAV path of the directory to copy favorites to
+
+You can create a static binary with `dart2native`:
+
+    dart2native bin/main.dart -o bin/nextcloud-favourite-share
